@@ -1,0 +1,44 @@
+.home {
+  min-height: 100vh;
+  background: var(--color-bg-main);
+  color: var(--color-text-main);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 1.5rem;
+  text-align: center;
+}
+
+.home h1 {
+  color: var(--color-primary);
+  font-size: 2.2rem;
+  margin-bottom: 0.5rem;
+}
+
+.home p {
+  color: var(--color-text-muted);
+  margin-bottom: 2rem;
+  font-size: 1rem;
+}
+
+.home-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* Tablet / Desktop */
+@media (min-width: 768px) {
+  .home h1 {
+    font-size: 3rem;
+  }
+
+  .home-actions {
+    flex-direction: row;
+    justify-content: center;
+  }
+
+  .home-actions .btn {
+    width: 200px;
+  }
+}

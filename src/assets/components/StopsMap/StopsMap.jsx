@@ -7,10 +7,12 @@ import {
   useMapEvents,
 } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-import markerIcon from "./leafletIcon.jsx";
+import markerIcon from "./LeafletIcon.jsx";
+import "./StopsMap.css";
 
 // 🏍️ velocidad promedio moto
-const AVERAGE_SPEED_KMH =53 ;
+const AVERAGE_SPEED_KMH = 55;
+
 // helpers UI
 const km = (meters) => (meters / 1000).toFixed(1);
 const time = (seconds) => {
@@ -19,7 +21,6 @@ const time = (seconds) => {
   return h > 0 ? `${h}h ${m}m` : `${m} min`;
 };
 
-// duración estimada moto
 const calcMotoDuration = (meters) => {
   const km = meters / 1000;
   const hours = km / AVERAGE_SPEED_KMH;
@@ -42,7 +43,6 @@ export default function StopsMap() {
   const [distance, setDistance] = useState(0);
   const [duration, setDuration] = useState(0);
 
-  // 📍 agregar parada
   const addStop = () => {
     if (!selected) return;
 
@@ -60,7 +60,6 @@ export default function StopsMap() {
     setSelected(null);
   };
 
-  // 🧭 pedir ruta real a OSRM
   const fetchRoute = async (points) => {
     if (points.length < 2) return null;
 
@@ -81,7 +80,6 @@ export default function StopsMap() {
     };
   };
 
-  // 🔁 recalcular ruta y métricas
   useEffect(() => {
     const buildRoute = async () => {
       const points = stops.map((s) => [
@@ -100,7 +98,6 @@ export default function StopsMap() {
     buildRoute();
   }, [stops]);
 
-  // 🚀 crear evento
   const createEvent = async () => {
     await fetch("/api/events", {
       method: "POST",
@@ -118,68 +115,77 @@ export default function StopsMap() {
   };
 
   return (
-    <>
-      <MapContainer
-        center={[-34.6, -58.38]}
-        zoom={10}
-        style={{ height: "400px", borderRadius: 12 }}
-      >
-        <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+    <section className="stops-wrapper">
+      <div className="map-container">
+        <MapContainer
+          center={[-34.6, -58.38]}
+          zoom={10}
+          className="leaflet-map"
+        >
+          <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
+          <ClickHandler onSelect={setSelected} />
 
-        <ClickHandler onSelect={setSelected} />
+          {selected && (
+            <Marker
+              position={[selected.lat, selected.lng]}
+              icon={markerIcon}
+            />
+          )}
 
-        {/* marcador temporal */}
-        {selected && (
-          <Marker
-            position={[selected.lat, selected.lng]}
-            icon={markerIcon}
-          />
+          {stops.map((s, i) => (
+            <Marker
+              key={i}
+              icon={markerIcon}
+              position={[
+                s.location.coordinates[1],
+                s.location.coordinates[0],
+              ]}
+            />
+          ))}
+
+          {route.length > 0 && (
+            <Polyline
+              positions={route}
+              pathOptions={{ color: "var(--color-secondary)", weight: 5 }}
+            />
+          )}
+        </MapContainer>
+      </div>
+
+      <div className="stops-panel">
+        <button
+          className="btn-primary"
+          onClick={addStop}
+          disabled={!selected}
+        >
+          Agregar parada
+        </button>
+
+        <ul className="stops-list">
+          {stops.map((s, i) => (
+            <li key={i}>
+              <span>{i + 1}</span>
+              {s.name}
+            </li>
+          ))}
+        </ul>
+
+        {distance > 0 && (
+          <div className="stats-box">
+            <p>
+              <strong>📏 Distancia:</strong> {km(distance)} km
+            </p>
+            <p>
+              <strong>⏱ Duración:</strong> {time(duration)}
+            </p>
+            
+          </div>
         )}
 
-        {/* paradas */}
-        {stops.map((s, i) => (
-          <Marker
-            key={i}
-            icon={markerIcon}
-            position={[
-              s.location.coordinates[1],
-              s.location.coordinates[0],
-            ]}
-          />
-        ))}
-
-        {/* ruta real por calles */}
-        {route.length > 0 && (
-          <Polyline
-            positions={route}
-            pathOptions={{ color: "red", weight: 4 }}
-          />
-        )}
-      </MapContainer>
-
-      <button onClick={addStop} disabled={!selected}>
-        Agregar parada
-      </button>
-
-      <ul>
-        {stops.map((s, i) => (
-          <li key={i}>
-            {i + 1}. {s.name}
-          </li>
-        ))}
-      </ul>
-
-      {distance > 0 && (
-        <div style={{ marginTop: 10 }}>
-          <strong>Distancia:</strong> {km(distance)} km <br />
-          <strong>Tiempo estimado:</strong> {time(duration)} <br />
-          <small>Velocidad promedio: {AVERAGE_SPEED_KMH} km/h</small>
-        </div>
-      )}
-
-      <button onClick={createEvent}>
-        Crear evento
-      </button>
-    </>
+        <button className="btn-secondary" onClick={createEvent}>
+          Crear evento
+        </button>
+      </div>
+    </section>
   );
 }

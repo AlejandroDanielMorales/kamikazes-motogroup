@@ -1,0 +1,105 @@
+/* ===============================
+   🎴 BANNER SLIDER – MOTO EVENTS
+   =============================== */
+
+.banner {
+  width: 100%;
+  height: 60vh;
+  max-height: 420px;
+  overflow: hidden;
+  position: relative;
+  background: var(--color-black);
+}
+
+/* 🎥 Contenedor de slides */
+.slides {
+  display: flex;
+  width: 300%;
+  height: 100%;
+  animation: slider 12s infinite cubic-bezier(.77,0,.18,1);
+}
+
+/* 🎞️ Slide individual */
+.slide {
+  width: calc(100% / 3); /* 🔑 CLAVE */
+  height: 100%;
+  flex-shrink: 0;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 1rem;
+  position: relative;
+}
+
+/* 🈶 Texto */
+.slide h1 {
+  font-family: var(--font-title);
+  font-size: clamp(1.6rem, 4vw, 2.8rem);
+  color: var(--color-japan-red);
+  letter-spacing: 0.08em;
+  text-shadow: 0 0 12px rgba(0,0,0,0.8);
+}
+
+/* 🟥 Detalle japonés */
+.slide h1::after {
+  content: "";
+  display: block;
+  width: 60px;
+  height: 2px;
+  background: var(--color-japan-red);
+  margin: 1rem auto 0;
+}
+
+/* 🎴 Background común */
+.slide-1,
+.slide-2,
+.slide-3 {
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center center;
+}
+
+/* 🌑 Slides individuales */
+.slide-1 {
+  background-image:
+    linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
+    url("./../../images/1.jfif");
+}
+
+.slide-2 {
+  background-image:
+    linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
+    url("./../../images/2.jfif");
+}
+
+.slide-3 {
+  background-image:
+    linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
+    url("./../../images/3.jfif");
+}
+
+/* 🎥 Animación del slider */
+@keyframes slider {
+  0%   { transform: translateX(0); }
+  30%  { transform: translateX(0); }
+
+  35%  { transform: translateX(-33.333%); }
+  65%  { transform: translateX(-33.333%); }
+
+  70%  { transform: translateX(-66.666%); }
+  100% { transform: translateX(-66.666%); }
+}
+
+/* 📱➡️💻 Desktop */
+@media (min-width: 768px) {
+  .banner {
+    height: 70vh;
+    max-height: 520px;
+  }
+
+  .slide h1 {
+    font-size: clamp(2rem, 3vw, 3.2rem);
+  }
+}

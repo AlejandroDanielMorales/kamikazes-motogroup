@@ -1,5 +1,5 @@
 import { useState } from "react";
-import StopsMap from "./StopsMap";
+import StopsMap from "../StopsMap/StopsMap";
 
 export default function CreateEvent() {
   const [stops, setStops] = useState([]);
