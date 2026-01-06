@@ -4,6 +4,7 @@ import Home from "./assets/pages/Home/Home.jsx";
 import Login from "./assets/pages/Login/Login.jsx";
 import Register from "./assets/pages/Register/Register.jsx";
 import StopsMap from "./assets/components/StopsMap/StopsMap.jsx";
+import Events from "./assets/pages/Events/Events.jsx";
 
 function App() {
   return (
@@ -15,6 +16,8 @@ function App() {
         <Route path="/map" element={<StopsMap />} />
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
+        <Route path="/events" element={<Events />} />
+
       </Routes>
     </>
   );

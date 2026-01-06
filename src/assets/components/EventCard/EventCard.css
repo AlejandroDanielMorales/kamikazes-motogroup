@@ -1,0 +1,69 @@
+.event-card {
+  background: #111;
+  border-radius: 12px;
+  overflow: hidden;
+  color: #fff;
+}
+
+.event-image {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+}
+
+.event-content {
+  padding: 12px;
+}
+
+.event-title {
+  font-size: 1.1rem;
+  margin-bottom: 6px;
+}
+
+.event-date,
+.event-address {
+  font-size: 0.9rem;
+  opacity: 0.8;
+}
+
+.event-status {
+  margin-top: 8px;
+  font-weight: bold;
+}
+.event-status.upcoming {
+  color: #4caf50;
+}
+.event-status.past {
+  color: #f44336;
+}
+/* desktop */
+@media (min-width: 768px) {
+  .event-image {
+    height: 220px;
+  }
+}
+/* tablet */
+@media (min-width: 480px) and (max-width: 767px)
+{
+  .event-image {
+    height: 200px;
+  }
+}
+/* mobile */
+@media (max-width: 479px) {
+    .event-image {
+        height: 160px;
+    }
+    }
+/* mobile */
+
+@media (max-width: 479px) {
+  .event-title {
+    font-size: 1rem;
+  }
+  .event-date,
+  .event-address {
+    font-size: 0.85rem;
+  }
+}
+

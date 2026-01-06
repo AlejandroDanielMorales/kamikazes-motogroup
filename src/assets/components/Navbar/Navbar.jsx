@@ -42,7 +42,9 @@ export default function Navbar() {
               >
                 Salir
               </button>
+              <Link to="/events" onClick={closeMenu}>Eventos</Link>
             </>
+            
           ) : (
             <>
               <Link to="/login" onClick={closeMenu}>Login</Link>
