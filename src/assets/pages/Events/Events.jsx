@@ -1,11 +1,22 @@
-// src/pages/Events.jsx
-import EventsList from "../../components/EventsList/EventsList.jsx";
+import { useEffect } from "react";
+import  {useEvent}  from "../../hooks/useEvent.jsx";
 
-export default function Events() {
+import EventList from "../../components/EventsList/EventsList";
+
+function Events() {
+  const { events, loadingEvents, getAllEvents } = useEvent();
+
+  useEffect(() => {
+    getAllEvents();
+  }, []);
+  if (loadingEvents) return <p>Cargando eventos...</p>;
+
   return (
-    <main className="events-page">
+    <>
       <h1>Eventos</h1>
-      <EventsList />
-    </main>
+      <EventList events={events} />
+    </>
   );
 }
+
+export default Events;

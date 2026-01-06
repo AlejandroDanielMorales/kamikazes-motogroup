@@ -1,6 +1,7 @@
+// assets/contexts/EventProvider.jsx
 import { useState } from "react";
-import { EventContext } from "../context/EventContext.jsx";
 import axios from "axios";
+import { EventContext } from "../context/EventContext";
 import { useAuth } from "../hooks/useAuth";
 
 const API_URL = import.meta.env.VITE_API_URL;
@@ -12,10 +13,17 @@ function EventProvider({ children }) {
   const [myEvents, setMyEvents] = useState([]);
   const [loadingEvents, setLoadingEvents] = useState(false);
 
+  // 🔹 TODOS LOS EVENTOS
   const getAllEvents = async () => {
     try {
       setLoadingEvents(true);
-      const res = await axios.get(`${API_URL}/events`);
+
+      const res = await axios.get(`${API_URL}/events`, {
+        headers: token
+          ? { Authorization: `Bearer ${token}` }
+          : undefined,
+      });
+
       setEvents(res.data);
     } catch (err) {
       console.error("Error al obtener eventos", err);
@@ -24,6 +32,7 @@ function EventProvider({ children }) {
     }
   };
 
+  // 🔹 MIS EVENTOS
   const getMyEvents = async () => {
     if (!token) return;
 
@@ -42,14 +51,22 @@ function EventProvider({ children }) {
     }
   };
 
+  // 🔹 CREAR EVENTO
   const createEvent = async (eventData) => {
+    if (!token) throw new Error("No autenticado");
+
     try {
       const res = await axios.post(`${API_URL}/events`, eventData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },
       });
+
+      // 🔄 sync inmediato
       setEvents((prev) => [...prev, res.data]);
+      setMyEvents((prev) => [...prev, res.data]);
+
+      return res.data;
     } catch (err) {
       console.error("Error al crear evento", err);
       throw err;

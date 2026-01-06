@@ -1,12 +1,11 @@
-.events-list {
-  display: grid;
-  grid-template-columns: 1fr;
-  gap: 16px;
+.event-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  max-width: 900px;
+  margin: 0 auto;
 }
 
-/* desktop */
-@media (min-width: 768px) {
-  .events-list {
-    grid-template-columns: repeat(2, 1fr);
-  }
+.event-list-title {
+  margin-bottom: 1rem;
 }
