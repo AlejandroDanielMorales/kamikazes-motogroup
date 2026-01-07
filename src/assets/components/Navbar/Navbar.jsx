@@ -34,7 +34,7 @@ export default function Navbar() {
               </span>
 
               <button
-                className="navbar-logout"
+                className="btn primary navbar-logout"
                 onClick={() => {
                   logout();
                   closeMenu();

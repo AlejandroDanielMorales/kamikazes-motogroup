@@ -13,7 +13,8 @@ function EventCard({ event }) {
 
       <h3>{event.title}</h3>
 
-      {event.description && <p>{event.description}</p>}
+      {event.description && <li key={event._id}>📍{event.description}</li>}
+      
 
       <h4>Fecha</h4>
 
@@ -27,7 +28,7 @@ function EventCard({ event }) {
       <h4>Primer lugar de encuentro</h4>
       {event.meetingAddress && (
         <div className="event-address">
-          <p>📍 {event.meetingAddress}</p>
+          <li key={event._id}>📍{event.meetingAddress}</li>
         </div>
         
       )}
@@ -44,7 +45,7 @@ function EventCard({ event }) {
           ))}
         </ul>
       )}
-      <button>Ver detalles</button>
+      <button className="btn primary">Ver detalles</button>
     </div>
   );
 }
