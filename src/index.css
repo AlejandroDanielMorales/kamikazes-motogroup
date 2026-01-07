@@ -94,6 +94,11 @@ h1,h2 {
    font-family: var(--font-title);
   letter-spacing: 0.04em;
 }
+h4,h5,h6 {
+  color: var(--color-text-main);
+   font-family: var(--font-title);
+  letter-spacing: 0.03em;
+}
 
 
 body {
