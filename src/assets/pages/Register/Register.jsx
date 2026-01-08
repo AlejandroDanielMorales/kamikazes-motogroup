@@ -1,4 +1,4 @@
-import "./../Login/login.css";
+import "./../Login/Login.css";
 
 export default function Register() {
   return (

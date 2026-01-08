@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { AuthContext } from "../context/authContext";
+import { AuthContext } from "../context/AuthContext";
 import axios from "axios";
 
 const API_URL = import.meta.env.VITE_API_URL;
