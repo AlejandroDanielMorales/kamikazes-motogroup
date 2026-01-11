@@ -14,17 +14,23 @@ function EventProvider({ children }) {
   const [loadingEvents, setLoadingEvents] = useState(false);
 
   // 🔹 TODOS LOS EVENTOS
-  const getAllEvents = async () => {
-    try {
-      setLoadingEvents(true);
-      const res = await axios.get(`${API_URL}/events`);
-      setEvents(res.data);
-    } catch (err) {
-      console.error("Error al obtener eventos", err);
-    } finally {
-      setLoadingEvents(false);
-    }
-  };
+const getAllEvents = async () => {
+  try {
+    setLoadingEvents(true);
+
+    const res = await axios.get(`${API_URL}/events`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    setEvents(res.data);
+  } catch (err) {
+    console.error("Error al obtener eventos", err);
+  } finally {
+    setLoadingEvents(false);
+  }
+};
 
   // 🔹 MIS EVENTOS
   const getMyEvents = async () => {
@@ -46,47 +52,56 @@ function EventProvider({ children }) {
   };
 
   // 🔹 CREAR EVENTO + STOPS (escalonado)
-  const createEventWithStops = async ({ eventData, stops }) => {
-    if (!token) throw new Error("No autenticado");
+ const createEventWithStops = async ({ eventData, stops }) => {
+  if (!token) throw new Error("No autenticado");
 
-    try {
-      // 1️⃣ crear stops en bulk
-      const stopsRes = await axios.post(
-        `${API_URL}/stops/bulk`,
-        stops.map((s) => ({
-          name: s.name,
-          description: s.description || "Parada del recorrido",
-          location: s.location,
-        })),
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+  try {
+    setLoadingEvents(true);
+    console.log("Token en createEventWithStops:", token);
 
-      const stopIds = stopsRes.data.map((s) => s._id);
-
-      // 2️⃣ crear evento
-      const eventRes = await axios.post(
-        `${API_URL}/events`,
-        {
-          ...eventData,
-          stops: stopIds,
+    // 1️⃣ Crear paradas (PROTEGIDO)
+    const stopsRes = await axios.post(
+      `${API_URL}/stops/bulk`,
+      stops.map((stop) => ({
+        name: stop.name,
+        description: stop.description || "Parada del recorrido",
+        location: stop.location,
+      })),
+      {
+        headers: {
+          Authorization: `Bearer ${token}`, // ✅ CLAVE
         },
-        {
-          headers: { Authorization: `Bearer ${token}` },
-        }
-      );
+      }
+    );
 
-      // 3️⃣ sync local
-      setEvents((prev) => [...prev, eventRes.data]);
-      setMyEvents((prev) => [...prev, eventRes.data]);
+    const stopIds = stopsRes.data.map((s) => s._id);
 
-      return eventRes.data;
-    } catch (err) {
-      console.error("Error al crear evento con paradas", err);
-      throw err;
-    }
-  };
+    // 2️⃣ Crear evento con IDs de paradas
+    const eventRes = await axios.post(
+      `${API_URL}/events`,
+      {
+        ...eventData,
+        stops: stopIds,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`, // ✅ CLAVE
+        },
+      }
+    );
+
+    setEvents((prev) => [...prev, eventRes.data]);
+    setMyEvents((prev) => [...prev, eventRes.data]);
+
+    return eventRes.data;
+  } catch (err) {
+    console.error("Error al crear evento con paradas", err);
+    throw err;
+  } finally {
+    setLoadingEvents(false);
+  }
+};
+
 
   return (
     <EventContext.Provider

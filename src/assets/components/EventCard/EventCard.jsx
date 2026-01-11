@@ -4,49 +4,68 @@ function EventCard({ event }) {
   const mainImage = event.images?.[0];
 
   return (
-    <div className="event-card card">
+    <article className="event-card card">
       {mainImage && (
         <div className="event-card-image">
           <img src={mainImage} alt={event.title} />
         </div>
       )}
 
-      <h3>{event.title}</h3>
+      <header className="event-card-header">
+        <h3>{event.title}</h3>
+      </header>
 
-      {event.description && <li key={event._id}>📍{event.description}</li>}
-      
+      {event.description && (
+        <p className="event-description">
+          📝 {event.description}
+        </p>
+      )}
 
-      <h4>Fecha</h4>
+      <section className="event-section">
+        <h4>📅 Fecha</h4>
+        <div className="event-card-meta">
+          <span>
+            {new Date(event.date).toLocaleDateString()}
+          </span>
 
-      <div className="event-card-meta">
-        <span>📅 {new Date(event.date).toLocaleDateString()}</span>
-        <span className={`event-status ${event.status}`}>
-          {event.status}
-        </span>
-
-      </div>
-      <h4>Primer lugar de encuentro</h4>
-      {event.meetingAddress && (
-        <div className="event-address">
-          <li key={event._id}>📍{event.meetingAddress}</li>
+          {event.status && (
+            <span className={`event-status ${event.status}`}>
+              {event.status}
+            </span>
+          )}
         </div>
-        
+      </section>
+
+      {event.meetingAddress && (
+        <section className="event-section">
+          <h4>📍 Primer punto de encuentro</h4>
+          <p className="event-address">
+            {event.meetingAddress}
+          </p>
+        </section>
       )}
 
-      <h4>Paradas y encuentros</h4>
       {event.stops?.length > 0 && (
-        <ul className="event-stops">
-          {event.stops.map((stop, i) => (
-            <>
-            <li key={stop._id || i}>🏁 {stop.name}</li>
-            <li key={stop._id || i}>📝 {stop.description}</li>
+        <section className="event-section">
+          <h4>🏁 Paradas del recorrido</h4>
 
-            </>
-          ))}
-        </ul>
+          <ul className="event-stops">
+            {event.stops.map((stop, i) => (
+              <li key={stop._id || i} className="event-stop">
+                <strong>{i + 1}. {stop.name}</strong>
+                <span className="stop-description">
+                  📝 {stop.description}
+                </span>
+              </li>
+            ))}
+          </ul>
+        </section>
       )}
-      <button className="btn primary">Ver detalles</button>
-    </div>
+
+      <button className="btn primary">
+        Ver detalles
+      </button>
+    </article>
   );
 }
 
