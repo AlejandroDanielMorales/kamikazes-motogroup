@@ -9,6 +9,7 @@ import {
 import "leaflet/dist/leaflet.css";
 import markerIcon from "./LeafletIcon.jsx";
 import "./StopsMap.css";
+import { useEvent } from "../../hooks/useEvent"; // ✅ IMPORTANTE
 
 // 🏍️ velocidad promedio moto
 const AVERAGE_SPEED_KMH = 55;
@@ -37,6 +38,8 @@ function ClickHandler({ onSelect }) {
 }
 
 export default function StopsMap() {
+  const { createEventWithStops } = useEvent(); // ✅
+
   const [selected, setSelected] = useState(null);
   const [stops, setStops] = useState([]);
   const [route, setRoute] = useState([]);
@@ -50,6 +53,7 @@ export default function StopsMap() {
       ...prev,
       {
         name: `Parada ${prev.length + 1}`,
+        description: "Parada del recorrido",
         location: {
           type: "Point",
           coordinates: [selected.lng, selected.lat],
@@ -58,6 +62,28 @@ export default function StopsMap() {
     ]);
 
     setSelected(null);
+  };
+
+  // ✅ CREACIÓN REAL DEL EVENTO
+  const handleCreate = async () => {
+    if (stops.length === 0) return alert("Agregá al menos una parada");
+
+    await createEventWithStops({
+      eventData: {
+        title: "Salida en moto",
+        description: "Ruta creada desde el mapa",
+        date: new Date(),
+        departTime: new Date(),
+        startLocation: stops[0].location,
+      },
+      stops,
+    });
+
+    alert("Evento creado 🚀");
+    setStops([]);
+    setRoute([]);
+    setDistance(0);
+    setDuration(0);
   };
 
   const fetchRoute = async (points) => {
@@ -98,22 +124,6 @@ export default function StopsMap() {
     buildRoute();
   }, [stops]);
 
-  const createEvent = async () => {
-    await fetch("/api/events", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        title: "Salida en moto",
-        date: new Date(),
-        departTime: new Date(),
-        stops,
-        distance,
-        duration,
-        averageSpeed: AVERAGE_SPEED_KMH,
-      }),
-    });
-  };
-
   return (
     <section className="stops-wrapper">
       <div className="map-container">
@@ -126,10 +136,7 @@ export default function StopsMap() {
           <ClickHandler onSelect={setSelected} />
 
           {selected && (
-            <Marker
-              position={[selected.lat, selected.lng]}
-              icon={markerIcon}
-            />
+            <Marker position={[selected.lat, selected.lng]} icon={markerIcon} />
           )}
 
           {stops.map((s, i) => (
@@ -164,8 +171,7 @@ export default function StopsMap() {
         <ul className="stops-list">
           {stops.map((s, i) => (
             <li key={i}>
-              <span>{i + 1}</span>
-              {s.name}
+              <span>{i + 1}</span> {s.name}
             </li>
           ))}
         </ul>
@@ -178,11 +184,10 @@ export default function StopsMap() {
             <p>
               <strong>⏱ Duración:</strong> {time(duration)}
             </p>
-            
           </div>
         )}
 
-        <button className="btn-secondary" onClick={createEvent}>
+        <button className="btn-secondary" onClick={handleCreate}>
           Crear evento
         </button>
       </div>
