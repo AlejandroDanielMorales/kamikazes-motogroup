@@ -29,6 +29,19 @@ export default function Navbar() {
 
           {isAuthenticated && user ? (
             <>
+              <Link to="/events" onClick={closeMenu}>Eventos</Link>
+
+              {/* 🔐 SOLO ADMIN */}
+              {user.role === "admin" && (
+                <Link
+                  to="/admin/event"
+                  onClick={closeMenu}
+                  className="admin-link"
+                >
+                  🛠 Admin
+                </Link>
+              )}
+
               <span className="navbar-user">
                 👤 {user.name}
               </span>
@@ -42,9 +55,7 @@ export default function Navbar() {
               >
                 Salir
               </button>
-              <Link to="/events" onClick={closeMenu}>Eventos</Link>
             </>
-            
           ) : (
             <>
               <Link to="/login" onClick={closeMenu}>Login</Link>

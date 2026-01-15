@@ -45,60 +45,77 @@ const getAllEvents = async () => {
       });
       setMyEvents(res.data);
     } catch (err) {
-      console.error("Error al obtener mis eventos", err);
+       console.error("Error al obtener mis eventos", err);
     } finally {
       setLoadingEvents(false);
     }
   };
-
-  // 🔹 CREAR EVENTO + STOPS (escalonado)
- const createEventWithStops = async ({ eventData, stops }) => {
+const createEventWithStops = async ({ eventData, stops, images }) => {
   if (!token) throw new Error("No autenticado");
+  let sended = null
 
   try {
     setLoadingEvents(true);
-    console.log("Token en createEventWithStops:", token);
 
-    // 1️⃣ Crear paradas (PROTEGIDO)
+    // 1️⃣ CREAR PARADAS (JSON)
     const stopsRes = await axios.post(
       `${API_URL}/stops/bulk`,
-      stops.map((stop) => ({
-        name: stop.name,
-        description: stop.description || "Parada del recorrido",
-        location: stop.location,
+      stops.map((s) => ({
+        name: s.name,
+        description: s.description || "Parada del recorrido",
+        location: s.location,
       })),
       {
         headers: {
-          Authorization: `Bearer ${token}`, // ✅ CLAVE
+          Authorization: `Bearer ${token}`,
         },
       }
     );
 
     const stopIds = stopsRes.data.map((s) => s._id);
 
-    // 2️⃣ Crear evento con IDs de paradas
-    const eventRes = await axios.post(
+    // 2️⃣ CREAR EVENTO (FormData EXACTO A POSTMAN)
+    const formData = new FormData();
+
+    formData.append("title", eventData.title);
+    formData.append("description", eventData.description || "");
+    formData.append("date", eventData.date);
+    formData.append("departTime", eventData.departTime);
+    formData.append("returnTime", eventData.returnTime || "");
+    formData.append("meetingAddress", eventData.meetingAddress || "");
+
+    formData.append(
+      "startLocation",
+      JSON.stringify(eventData.startLocation)
+    );
+
+    // 🔥 SOLO IDS
+    formData.append("stops", JSON.stringify(stopIds));
+
+    // 🖼️ IMAGEN (MISMO NOMBRE QUE POSTMAN)
+    if (images) {
+      formData.append("images", images);
+    }
+    sended = formData;
+    const res = await axios.post(
       `${API_URL}/events`,
-      {
-        ...eventData,
-        stops: stopIds,
-      },
+      formData,
       {
         headers: {
-          Authorization: `Bearer ${token}`, // ✅ CLAVE
+          Authorization: `Bearer ${token}`,
         },
       }
     );
 
-    setEvents((prev) => [...prev, eventRes.data]);
-    setMyEvents((prev) => [...prev, eventRes.data]);
+    setEvents((prev) => [...prev, res.data]);
+    setMyEvents((prev) => [...prev, res.data]);
 
-    return eventRes.data;
+    return res.data;
   } catch (err) {
-    console.error("Error al crear evento con paradas", err);
+    console.error("Error al crear evento" + `${sended}`, err.response?.data || err);
     throw err;
   } finally {
-    setLoadingEvents(false);
+    setLoadingEvents(false); 
   }
 };
 

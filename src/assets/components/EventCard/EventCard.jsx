@@ -1,13 +1,13 @@
 import "./EventCard.css";
 
 function EventCard({ event }) {
-  const mainImage = event.images?.[0];
+
 
   return (
     <article className="event-card card">
-      {mainImage && (
+      {event.imageUrl && (
         <div className="event-card-image">
-          <img src={mainImage} alt={event.title} />
+          <img src={event.imageUrl} alt={event.imageUrl} />
         </div>
       )}
 
