@@ -1,0 +1,31 @@
+ h2 {
+  text-align: center;
+  color: var(--color-primary);
+  margin-bottom: 0.5rem;
+  font-size: 1.6rem;
+}
+.stop-edit {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+ input ,textarea {
+  background: var(--color-bg-elevated);
+  border: 1px solid #333;
+  padding: 0.9rem;
+  width: auto;
+  border-radius: var(--border-radius-sm);
+  color: var(--color-text-main);
+  font-size: 1rem;
+}
+
+input::placeholder, textarea::placeholder {
+  color: var(--color-text-muted);
+}
+
+input:focus, textarea:focus {
+  outline: none;
+  border-color: var(--color-primary);
+}

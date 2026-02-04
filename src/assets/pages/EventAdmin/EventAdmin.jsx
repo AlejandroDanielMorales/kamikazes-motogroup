@@ -3,6 +3,7 @@ import EventMap from "../../components/EventMap/EventMap";
 import EventForm from "../../components/EventForm/EventForm";
 import { useEvent } from "../../hooks/useEvent";
 import Swal from "sweetalert2";
+import "./EventAdmin.css";
 
 const AVERAGE_SPEED_KMH = 55;
 
@@ -235,31 +236,19 @@ const onSubmit = async (data) => {
 
   return (
     <section className="stops-wrapper">
+      <div>
       <EventMap
         stops={stops}
         route={route}
         selected={selected}    
         onSelect={setSelected}
       />
-
-      <div className="stops-panel">
-        <button
-          className="btn-secondary"
-          onClick={addStop}
-          disabled={!selected}
-        >
-          Agregar parada
-        </button>
-
-        {distance > 0 && (
-          <div className="stats-box">
-            📏 {km(distance)} km · ⏱{" "}
-            {time(calcMotoDuration(distance))}
-          </div>
-        )}
-
+      <div>
+       <h3>Paradas</h3>
         {stops.map((stop, i) => (
           <div key={i} className="stop-edit">
+           
+            🛑
             <input
               value={stop.name}
               onChange={(e) => {
@@ -276,6 +265,7 @@ const onSubmit = async (data) => {
                 copy[i].description = e.target.value;
                 setStops(copy);
               }}
+              placeholder="Descripción (opcional)"
             />
           </div>
         ))}
@@ -286,7 +276,17 @@ const onSubmit = async (data) => {
             <p>⏱ {time(duration)}</p>
           </div>
         )}
-
+        <button
+          className="btn-secondary"
+          onClick={addStop}
+          disabled={!selected}
+        >
+          Agregar parada
+        </button>
+      </div>
+      </div>
+      <div className="stops-panel">
+         
         <EventForm onSubmit={onSubmit} />
       </div>
     </section>
